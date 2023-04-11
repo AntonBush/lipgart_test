@@ -3,6 +3,6 @@
 
 #define ENDL "\n"
 
-typedef char* string;
+typedef char* string_t;
 
-#endif STRING_UTILITY
+#endif // STRING_UTILITY

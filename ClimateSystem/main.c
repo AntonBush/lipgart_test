@@ -6,19 +6,68 @@
 
 #include <stdio.h>
 
-int main(int argc, string argv[])
+FILE * open_file(string_t file_name)
 {
-	struct ClimateSystem climate_system;
+    FILE * file;
+    fopen_s(&file, file_name, "r");
+    return file;
+}
 
-	printf("%d"ENDL, argc);
+int main(void)
+{
+    FILE * climate_system_transition_table_file
+        = open_file("climate_system_transition_table.txt");
 
-	for (int i = 0; i < argc; ++i)
-	{
-		printf("Arg%d:"ENDL, i);
-		puts(argv[i]);
-	}
+    FILE * convector_transition_table_file
+        = open_file("convector_transition_table.txt");
 
-	puts("End");
+    FILE * heater_transition_table_file
+        = open_file("heater_transition_table.txt");
+
+    FILE * condenser_transition_table_file
+        = open_file("condenser_transition_table.txt");
+    FILE * compressor_transition_table_file
+        = open_file("compressor_transition_table.txt");
+
+    if (climate_system_transition_table_file == NULL)
+    {
+        puts("Climate system transition table not found.");
+        return -1;
+    }
+
+    if (convector_transition_table_file == NULL)
+    {
+        puts("Convector transition table not found.");
+        return -1;
+    }
+
+    if (heater_transition_table_file == NULL)
+    {
+        puts("Heater transition table not found.");
+        return -1;
+    }
+
+    if (condenser_transition_table_file == NULL)
+    {
+        puts("Condenser transition table not found.");
+        return -1;
+    }
+
+    if (compressor_transition_table_file == NULL)
+    {
+        puts("Compressor transition table not found.");
+        return -1;
+    }
+
+    struct ClimateSystem system;
+
+    system.transition_table;
+    system.convector.transition_table;
+    system.heater.transition_table;
+    system.conditioner.condenser.transition_table;
+    system.conditioner.compressor.transition_table;
+
+    puts("End");
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
