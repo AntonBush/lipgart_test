@@ -5,4 +5,6 @@
 
 typedef char* string_t;
 
+void puterr(string_t s);
+
 #endif // STRING_UTILITY
