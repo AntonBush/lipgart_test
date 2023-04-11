@@ -4,7 +4,7 @@
 #include "degree_t.h"
 
 /*
-    Cигнал ШИМ, если PWM = 30%:
+    PWM signal if Pwm = 30%:
 
     /|\
      |
@@ -16,9 +16,9 @@
      |  |                   |
      |  |<------100%------->|
      |
-       ----------------------------------------------> Время
+       ----------------------------------------------> time
 
-    Cигнал ШИМ, если PWM = 70%:
+    PWM signal if Pwm = 70%:
 
     /|\
      |
@@ -30,7 +30,7 @@
      |  |                   |
      |  |<------100%------->|
      |
-       ----------------------------------------------> Время
+       ----------------------------------------------> time
 */
 enum Pwm
 {
@@ -82,8 +82,7 @@ struct Convector
         transition_table[PWM_COUNT];
 };
 
-struct Convector * transitConvector(
-      struct Convector * convector
-    , degrees_t dt                 );
+struct Convector * transitConvector( struct Convector * convector
+                                   , degrees_t dt                 );
 
 #endif // CONVECTOR

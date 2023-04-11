@@ -53,8 +53,7 @@ struct Heater
         transition_table[HEATER_N_REGIMES];
 };
 
-struct Heater * transitHeater(
-      struct Heater * heater
-    , degrees_t dt           );
+struct Heater * transitHeater( struct Heater * heater
+                             , degrees_t dt           );
 
 #endif // HEATER

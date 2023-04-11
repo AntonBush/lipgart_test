@@ -12,7 +12,7 @@ enum CondenserRegime
     , CONDENSER_N_REGIMES
 };
 
-inline enum CondenserRegime condeserRegimeFromInt(int i)
+inline enum CondenserRegime condenserRegimeFromInt(int i)
 {
     switch (i)
     {
@@ -24,7 +24,7 @@ inline enum CondenserRegime condeserRegimeFromInt(int i)
     }
 }
 
-inline int condeserRegimeToInt(enum CondenserRegime regime)
+inline int condenserRegimeToInt(enum CondenserRegime regime)
 {
     switch (regime)
     {
@@ -89,7 +89,7 @@ struct Compressor
 {
     enum CompressorRegime regime;
     enum CompressorRegime
-        transition_table[CONDENSER_N_REGIMES][COMPRESSOR_N_REGIMES];
+        transition_table[COMPRESSOR_N_REGIMES][CONDENSER_N_REGIMES];
 };
 
 
@@ -99,8 +99,7 @@ struct Conditioner
     struct Compressor compressor;
 };
 
-struct Conditioner * transitConditioner(
-      struct Conditioner * conditioner
-    , degrees_t dt                     );
+struct Conditioner * transitConditioner( struct Conditioner * conditioner
+                                       , degrees_t dt                     );
 
 #endif // CONDITIONER

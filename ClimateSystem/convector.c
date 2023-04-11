@@ -9,9 +9,8 @@ static column_t * nextStateColumn(struct Convector * convector)
     return &(convector->transition_table[convector->regime]);
 }
 
-struct Convector * transitConvector(
-      struct Convector * convector
-    , degrees_t dt                 )
+struct Convector * transitConvector( struct Convector * convector
+                                   , degrees_t dt                 )
 {
     if (convector == NULL)
     {

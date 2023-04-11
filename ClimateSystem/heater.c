@@ -9,9 +9,8 @@ static column_t * nextStateColumn(struct Heater * heater)
     return &(heater->transition_table[heater->regime]);
 }
 
-struct Heater * transitHeater(
-      struct Heater * heater
-    , degrees_t dt         )
+struct Heater * transitHeater( struct Heater * heater
+                             , degrees_t dt           )
 {
     if (heater == NULL)
     {

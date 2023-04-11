@@ -2,15 +2,13 @@
 
 #include <stddef.h>
 
-static void transitCondenser(
-      struct Conditioner * conditioner
-    , degrees_t dt                     );
+static void transitCondenser( struct Conditioner * conditioner
+                            , degrees_t dt                     );
 static void transitCompressor(struct Conditioner * conditioner);
 
 
-struct Conditioner * transitConditioner(
-      struct Conditioner * conditioner
-    , degrees_t dt)
+struct Conditioner * transitConditioner( struct Conditioner * conditioner
+                                       , degrees_t dt                     )
 {
     if (conditioner == NULL)
     {
@@ -25,15 +23,13 @@ struct Conditioner * transitConditioner(
 
 typedef struct CondenserTransitionTableColumn condenser_column_t;
 
-static condenser_column_t * nextCondenserStateColumn(
-    struct Condenser * condenser)
+static condenser_column_t * nextCondenserStateColumn(struct Condenser * condenser)
 {
     return &(condenser->transition_table[condenser->regime]);
 }
 
-void transitCondenser(
-      struct Conditioner * conditioner
-    , degrees_t dt                     )
+void transitCondenser( struct Conditioner * conditioner
+                     , degrees_t dt                     )
 {
     struct Condenser * condenser = &(conditioner->condenser);
     condenser_column_t * column = nextCondenserStateColumn(condenser);
@@ -69,5 +65,5 @@ void transitCompressor(struct Conditioner * conditioner)
         = compressor->transition_table;
 
     compressor->regime
-        = transition_table[condenser->regime][compressor->regime];
+        = transition_table[compressor->regime][condenser->regime];
 }

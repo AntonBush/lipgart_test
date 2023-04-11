@@ -9,9 +9,8 @@ static column_t * nextStateColumn(struct ClimateSystem * system)
     return &(system->transition_table[system->regime]);
 }
 
-struct ClimateSystem * transitClimateSystem(
-      struct ClimateSystem * system
-    , degrees_t dt                  )
+struct ClimateSystem * transitClimateSystem( struct ClimateSystem * system
+                                           , degrees_t dt                  )
 {
     if (system == NULL)
     {
