@@ -61,9 +61,6 @@ void transitCompressor(struct Conditioner * conditioner)
     struct Condenser * condenser = &(conditioner->condenser);
     struct Compressor * compressor = &(conditioner->compressor);
 
-    enum CompressorRegime ** transition_table
-        = compressor->transition_table;
-
     compressor->regime
-        = transition_table[compressor->regime][condenser->regime];
+        = compressor->transition_table[compressor->regime][condenser->regime];
 }
