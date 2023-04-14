@@ -181,6 +181,17 @@ int fillTransitionTables( struct ClimateSystem * system
 }
 
 static int loadIntMatrix(FILE * file, int * matrix, int n_rows, int n_columns);
+static int assertIntNotEquals(int expected, int actual, string_t message)
+{
+    if (expected == actual)
+    {
+        puterr("Assertion failed: expected equals actual");
+        puterr(message);
+        return -1;
+    }
+
+    return 0;
+}
 
 int fillClimateSystemTransitionTable( struct ClimateSystem * system
                                     , FILE * file                   )
@@ -213,6 +224,28 @@ int fillClimateSystemTransitionTable( struct ClimateSystem * system
             = climateSystemRegimeFromChar(climate_system_tt[3][i]);
         system->transition_table[i].if_dt_greater_1degree
             = climateSystemRegimeFromChar(climate_system_tt[4][i]);
+
+        static const char errmsg[] = "Invalid climate system regime";
+        int error = assertIntNotEquals( CLIMATE_SYSTEM_N_REGIMES
+                                      , system->transition_table[i].if_dt_less_minus_1degree
+                                      , errmsg );
+        error |= assertIntNotEquals( CLIMATE_SYSTEM_N_REGIMES
+                                   , system->transition_table[i].if_dt_equal_minus_1degree
+                                   , errmsg );
+        error |= assertIntNotEquals( CLIMATE_SYSTEM_N_REGIMES
+                                   , system->transition_table[i].if_dt_equal_0degree
+                                   , errmsg );
+        error |= assertIntNotEquals( CLIMATE_SYSTEM_N_REGIMES
+                                   , system->transition_table[i].if_dt_equal_1degree
+                                   , errmsg );
+        error |= assertIntNotEquals( CLIMATE_SYSTEM_N_REGIMES
+                                   , system->transition_table[i].if_dt_greater_1degree
+                                   , errmsg );
+
+        if (error != 0)
+        {
+            return -1;
+        }
     }
 
     return 0;
@@ -241,6 +274,28 @@ int fillConvectorTransitionTable( struct Convector * convector
             = pwmFromInt(convector_tt[3][i]);
         convector->transition_table[i].if_abs_dt_greater_3degree
             = pwmFromInt(convector_tt[4][i]);
+
+        static const char errmsg[] = "Invalid convector regime";
+        int error = assertIntNotEquals( PWM_COUNT
+                                      , convector->transition_table[i].if_abs_dt_equal_0degree
+                                      , errmsg );
+        error |= assertIntNotEquals( PWM_COUNT
+                                   , convector->transition_table[i].if_abs_dt_equal_1degree
+                                   , errmsg );
+        error |= assertIntNotEquals( PWM_COUNT
+                                   , convector->transition_table[i].if_abs_dt_equal_2degree
+                                   , errmsg );
+        error |= assertIntNotEquals( PWM_COUNT
+                                   , convector->transition_table[i].if_abs_dt_equal_3degree
+                                   , errmsg );
+        error |= assertIntNotEquals( PWM_COUNT
+                                   , convector->transition_table[i].if_abs_dt_greater_3degree
+                                   , errmsg );
+
+        if (error != 0)
+        {
+            return -1;
+        }
     }
 
     return 0;
@@ -269,6 +324,28 @@ int fillHeaterTransitionTable( struct Heater * heater
             = heaterRegimeFromInt(heater_tt[3][i]);
         heater->transition_table[i].if_dt_greater_3degree
             = heaterRegimeFromInt(heater_tt[4][i]);
+
+        static const char errmsg[] = "Invalid heater regime";
+        int error = assertIntNotEquals( HEATER_N_REGIMES
+                                      , heater->transition_table[i].if_dt_less_1degree
+                                      , errmsg );
+        error |= assertIntNotEquals( HEATER_N_REGIMES
+                                   , heater->transition_table[i].if_dt_equal_1degree
+                                   , errmsg );
+        error |= assertIntNotEquals( HEATER_N_REGIMES
+                                   , heater->transition_table[i].if_dt_equal_2degree
+                                   , errmsg );
+        error |= assertIntNotEquals( HEATER_N_REGIMES
+                                   , heater->transition_table[i].if_dt_equal_3degree
+                                   , errmsg );
+        error |= assertIntNotEquals( HEATER_N_REGIMES
+                                   , heater->transition_table[i].if_dt_greater_3degree
+                                   , errmsg );
+
+        if (error != 0)
+        {
+            return -1;
+        }
     }
 
     return 0;
@@ -297,6 +374,28 @@ int fillCondenserTransitionTable( struct Condenser * condenser
             = condenserRegimeFromInt(condenser_tt[3][i]);
         condenser->transition_table[i].if_dt_greater_minus_1degree
             = condenserRegimeFromInt(condenser_tt[4][i]);
+
+        static const char errmsg[] = "Invalid condenser regime";
+        int error = assertIntNotEquals( CONDENSER_N_REGIMES
+                                      , condenser->transition_table[i].if_dt_less_minus_3degree
+                                      , errmsg );
+        error |= assertIntNotEquals( CONDENSER_N_REGIMES
+                                   , condenser->transition_table[i].if_dt_equal_minus_3degree
+                                   , errmsg );
+        error |= assertIntNotEquals( CONDENSER_N_REGIMES
+                                   , condenser->transition_table[i].if_dt_equal_minus_2degree
+                                   , errmsg );
+        error |= assertIntNotEquals( CONDENSER_N_REGIMES
+                                   , condenser->transition_table[i].if_dt_equal_minus_1degree
+                                   , errmsg );
+        error |= assertIntNotEquals( CONDENSER_N_REGIMES
+                                   , condenser->transition_table[i].if_dt_greater_minus_1degree
+                                   , errmsg );
+
+        if (error != 0)
+        {
+            return -1;
+        }
     }
 
     return 0;
@@ -319,6 +418,16 @@ int fillCompressorTransitionTable( struct Compressor * compressor
         {
             compressor->transition_table[j][i]
                 = compressorRegimeFromInt(compressor_tt[i][j]);
+
+            static const char errmsg[] = "Invalid compressor regime";
+            int error = assertIntNotEquals( COMPRESSOR_N_REGIMES
+                                          , compressor->transition_table[j][i]
+                                          , errmsg );
+
+            if (error != 0)
+            {
+                return -1;
+            }
         }
     }
 
