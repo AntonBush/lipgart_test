@@ -3,12 +3,14 @@
 
 #include <stdio.h>
 
+// Пути к файлам с таблицами переходов элементов системы
 #define CLIMATE_SYSTEM_TT_FILE "climate_system_transition_table.txt"
 #define CONVECTOR_TT_FILE "convector_transition_table.txt"
 #define HEATER_TT_FILE "heater_transition_table.txt"
 #define CONDENSER_TT_FILE "condenser_transition_table.txt"
 #define COMPRESSOR_TT_FILE "compressor_transition_table.txt"
 
+// Структура файлов с таблицами переходов элементов системы
 struct TransitionTableFiles
 {
     FILE * climate_system;
@@ -18,6 +20,8 @@ struct TransitionTableFiles
     FILE * compressor;
 };
 
+// Установка начального состояния структуры файлов
+// с таблицами переходов для элементов системы
 static void initTransitionTableFiles(struct TransitionTableFiles * files)
 {
     files->climate_system = NULL;
@@ -27,12 +31,16 @@ static void initTransitionTableFiles(struct TransitionTableFiles * files)
     files->compressor     = NULL;
 }
 
+// Открытие и закрытие всех файлов для получения таблиц переходов
 static int openTransitionTableFiles(struct TransitionTableFiles * files);
 static void closeTransitionTableFiles(struct TransitionTableFiles * files);
 
+// Основная процедура заполнения таблиц переходов
+// с помощью открытых файлов
 static int fillTransitionTables( struct ClimateSystem * system
                                , struct TransitionTableFiles * files );
 
+// Основная процедура загрузки таблиц переходов
 int loadClimateSystemTransitionTables(struct ClimateSystem * system)
 {
     if (system == NULL)
@@ -44,6 +52,7 @@ int loadClimateSystemTransitionTables(struct ClimateSystem * system)
     struct TransitionTableFiles files;
     initTransitionTableFiles(&files);
 
+    // Для работы необходимы все таблицы переходов
     int error = openTransitionTableFiles(&files);
     if (error != 0)
     {
@@ -52,6 +61,7 @@ int loadClimateSystemTransitionTables(struct ClimateSystem * system)
         return error;
     }
 
+    // Для работы необходимы все таблицы переходов
     error = fillTransitionTables(system, &files);
     closeTransitionTableFiles(&files);
     if (error != 0)
@@ -63,6 +73,7 @@ int loadClimateSystemTransitionTables(struct ClimateSystem * system)
 	return 0;
 }
 
+// Функция-обёртка над библиотечной
 static FILE * open_file(string_t file_name)
 {
     FILE * file;
@@ -70,6 +81,7 @@ static FILE * open_file(string_t file_name)
     return file;
 }
 
+// Открытие всех файлов и проверка, что все были открыты
 int openTransitionTableFiles(struct TransitionTableFiles * files)
 {
     files->climate_system
@@ -119,6 +131,7 @@ int openTransitionTableFiles(struct TransitionTableFiles * files)
     return 0;
 }
 
+// Закрытие всех файлов
 void closeTransitionTableFiles(struct TransitionTableFiles * files)
 {
     if (files->climate_system != NULL) fclose(files->climate_system);
@@ -128,17 +141,19 @@ void closeTransitionTableFiles(struct TransitionTableFiles * files)
     if (files->compressor     != NULL) fclose(files->compressor);
 }
 
+// Набор процедур для заполнения таблиц переходов всех элементов системы
 static int fillClimateSystemTransitionTable( struct ClimateSystem * system
-                                           , FILE * file                   );
+                                           , FILE * file);
 static int fillConvectorTransitionTable( struct Convector * convector
-                                       , FILE * file                  );
+                                       , FILE * file);
 static int fillHeaterTransitionTable( struct Heater * heater
-                                    , FILE * file            );
+                                    , FILE * file);
 static int fillCondenserTransitionTable( struct Condenser * condenser
-                                       , FILE * file                  );
+                                       , FILE * file);
 static int fillCompressorTransitionTable( struct Compressor * compressor
-                                        , FILE * file                    );
+                                        , FILE * file);
 
+// Основная процедура заполнения таблиц переходов
 int fillTransitionTables( struct ClimateSystem * system
                         , struct TransitionTableFiles * files )
 {
@@ -180,7 +195,9 @@ int fillTransitionTables( struct ClimateSystem * system
     return 0;
 }
 
+// Вспомогательная функция загрузки целочисленной матрицы из текстового файла
 static int loadIntMatrix(FILE * file, int * matrix, int n_rows, int n_columns);
+//  Вспомогательная функция для проверки правильности записанных в файлах режимов
 static int assertIntNotEquals(int expected, int actual, string_t message)
 {
     if (expected == actual)
@@ -193,10 +210,13 @@ static int assertIntNotEquals(int expected, int actual, string_t message)
     return 0;
 }
 
+// Заполнение таблицы переходов климатической системы в целом
 int fillClimateSystemTransitionTable( struct ClimateSystem * system
                                     , FILE * file                   )
 {
+    // Буфер для таблицы переходов
     char climate_system_tt[CLIMATE_SYSTEM_TRANSITION_TABLE_COLUMN_SIZE][CLIMATE_SYSTEM_N_REGIMES];
+    // Заполнение буфера содержимым файла
     for (int i = 0; i < CLIMATE_SYSTEM_TRANSITION_TABLE_COLUMN_SIZE; ++i)
     {
         for (int j = 0; j < CLIMATE_SYSTEM_N_REGIMES; ++j)
@@ -212,8 +232,10 @@ int fillClimateSystemTransitionTable( struct ClimateSystem * system
         }
     }
 
+    // Заполнение таблицы переходов
     for (int i = 0; i < CLIMATE_SYSTEM_N_REGIMES; ++i)
     {
+        // Преобразование символов в режимы
         system->transition_table[i].if_dt_less_minus_1degree
             = climateSystemRegimeFromChar(climate_system_tt[0][i]);
         system->transition_table[i].if_dt_equal_minus_1degree
@@ -225,6 +247,7 @@ int fillClimateSystemTransitionTable( struct ClimateSystem * system
         system->transition_table[i].if_dt_greater_1degree
             = climateSystemRegimeFromChar(climate_system_tt[4][i]);
 
+        // Проверка валидности преобразованного
         static const char errmsg[] = "Invalid climate system regime";
         int error = assertIntNotEquals( CLIMATE_SYSTEM_N_REGIMES
                                       , system->transition_table[i].if_dt_less_minus_1degree
@@ -254,7 +277,9 @@ int fillClimateSystemTransitionTable( struct ClimateSystem * system
 int fillConvectorTransitionTable( struct Convector * convector
                                 , FILE * file                  )
 {
+    // Буфер для таблицы переходов
     int convector_tt[CONVECTOR_TRANSITION_TABLE_COLUMN_SIZE][PWM_COUNT];
+    // Заполнение буфера содержимым файла
     int error = loadIntMatrix(file, convector_tt, CONVECTOR_TRANSITION_TABLE_COLUMN_SIZE, PWM_COUNT);
     if (error != 0)
     {
@@ -262,6 +287,7 @@ int fillConvectorTransitionTable( struct Convector * convector
         return error;
     }
 
+    // Заполнение таблицы переходов
     for (int i = 0; i < PWM_COUNT; ++i)
     {
         convector->transition_table[i].if_abs_dt_equal_0degree
@@ -275,6 +301,7 @@ int fillConvectorTransitionTable( struct Convector * convector
         convector->transition_table[i].if_abs_dt_greater_3degree
             = pwmFromInt(convector_tt[4][i]);
 
+        // Проверка валидности преобразованного
         static const char errmsg[] = "Invalid convector regime";
         int error = assertIntNotEquals( PWM_COUNT
                                       , convector->transition_table[i].if_abs_dt_equal_0degree
@@ -304,7 +331,9 @@ int fillConvectorTransitionTable( struct Convector * convector
 int fillHeaterTransitionTable( struct Heater * heater
                              , FILE * file            )
 {
+    // Буфер для таблицы переходов
     int heater_tt[HEATER_TRANSITION_TABLE_COLUMN_SIZE][HEATER_N_REGIMES];
+    // Заполнение буфера содержимым файла
     int error = loadIntMatrix(file, heater_tt, HEATER_TRANSITION_TABLE_COLUMN_SIZE, HEATER_N_REGIMES);
     if (error != 0)
     {
@@ -312,6 +341,7 @@ int fillHeaterTransitionTable( struct Heater * heater
         return error;
     }
 
+    // Заполнение таблицы переходов
     for (int i = 0; i < HEATER_N_REGIMES; ++i)
     {
         heater->transition_table[i].if_dt_less_1degree
@@ -325,6 +355,7 @@ int fillHeaterTransitionTable( struct Heater * heater
         heater->transition_table[i].if_dt_greater_3degree
             = heaterRegimeFromInt(heater_tt[4][i]);
 
+        // Проверка валидности преобразованного
         static const char errmsg[] = "Invalid heater regime";
         int error = assertIntNotEquals( HEATER_N_REGIMES
                                       , heater->transition_table[i].if_dt_less_1degree
@@ -354,7 +385,9 @@ int fillHeaterTransitionTable( struct Heater * heater
 int fillCondenserTransitionTable( struct Condenser * condenser
                                 , FILE * file                  )
 {
+    // Буфер для таблицы переходов
     int condenser_tt[CONDENSER_TRANSITION_TABLE_COLUMN_SIZE][CONDENSER_N_REGIMES];
+    // Заполнение буфера содержимым файла
     int error = loadIntMatrix(file, condenser_tt, CONDENSER_TRANSITION_TABLE_COLUMN_SIZE, CONDENSER_N_REGIMES);
     if (error != 0)
     {
@@ -362,6 +395,7 @@ int fillCondenserTransitionTable( struct Condenser * condenser
         return error;
     }
 
+    // Заполнение таблицы переходов
     for (int i = 0; i < CONDENSER_N_REGIMES; ++i)
     {
         condenser->transition_table[i].if_dt_less_minus_3degree
@@ -375,6 +409,7 @@ int fillCondenserTransitionTable( struct Condenser * condenser
         condenser->transition_table[i].if_dt_greater_minus_1degree
             = condenserRegimeFromInt(condenser_tt[4][i]);
 
+        // Проверка валидности преобразованного
         static const char errmsg[] = "Invalid condenser regime";
         int error = assertIntNotEquals( CONDENSER_N_REGIMES
                                       , condenser->transition_table[i].if_dt_less_minus_3degree
@@ -404,7 +439,9 @@ int fillCondenserTransitionTable( struct Condenser * condenser
 int fillCompressorTransitionTable( struct Compressor * compressor
                                  , FILE * file                    )
 {
+    // Буфер для таблицы переходов
     int compressor_tt[CONDENSER_N_REGIMES][COMPRESSOR_N_REGIMES];
+    // Заполнение буфера содержимым файла
     int error = loadIntMatrix(file, compressor_tt, CONDENSER_N_REGIMES, COMPRESSOR_N_REGIMES);
     if (error != 0)
     {
@@ -412,6 +449,7 @@ int fillCompressorTransitionTable( struct Compressor * compressor
         return error;
     }
 
+    // Заполнение таблицы переходов
     for (int i = 0; i < CONDENSER_N_REGIMES; ++i)
     {
         for (int j = 0; j < COMPRESSOR_N_REGIMES; ++j)
@@ -419,6 +457,7 @@ int fillCompressorTransitionTable( struct Compressor * compressor
             compressor->transition_table[j][i]
                 = compressorRegimeFromInt(compressor_tt[i][j]);
 
+            // Проверка валидности преобразованного
             static const char errmsg[] = "Invalid compressor regime";
             int error = assertIntNotEquals( COMPRESSOR_N_REGIMES
                                           , compressor->transition_table[j][i]
@@ -436,6 +475,7 @@ int fillCompressorTransitionTable( struct Compressor * compressor
 
 int loadIntMatrix(FILE * file, int * matrix, int n_rows, int n_columns)
 {
+    // Обход матрицы по строчкам и последовательное чтение файла
     for (int row = 0; row < n_rows; ++row)
     {
         for (int column = 0; column < n_columns; ++column)
@@ -447,6 +487,8 @@ int loadIntMatrix(FILE * file, int * matrix, int n_rows, int n_columns)
                 puterr("Error while reading matrix.");
                 return -1;
             }
+            // То же самое, что и matrix[row][column],
+            // если тип matrix был бы int[][n_columns]
             matrix[row * n_columns + column] = integer;
         }
     }

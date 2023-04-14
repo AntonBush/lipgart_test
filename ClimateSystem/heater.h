@@ -3,15 +3,18 @@
 
 #include "degree_t.h"
 
+// Режим работы отопителя
 enum HeaterRegime
 {
       Heater0
     , Heater33
     , Heater66
     , Heater100
+    // Число режимов работы отопителя
     , HEATER_N_REGIMES
 };
 
+// Получение режима из числа
 inline enum HeaterRegime heaterRegimeFromInt(int i)
 {
     switch (i)
@@ -24,6 +27,7 @@ inline enum HeaterRegime heaterRegimeFromInt(int i)
     }
 }
 
+// Преобразование режима в число
 inline int heaterRegimeToInt(enum HeaterRegime regime)
 {
     switch (regime)
@@ -37,6 +41,8 @@ inline int heaterRegimeToInt(enum HeaterRegime regime)
     }
 }
 
+// dt = delta_temperature = target_t - current_t
+// dt - отклонение от уставки
 #define HEATER_TRANSITION_TABLE_COLUMN_SIZE 5
 struct HeaterTransitionTableColumn
 {
@@ -47,6 +53,7 @@ struct HeaterTransitionTableColumn
     enum CondenserRegime if_dt_greater_3degree;
 };
 
+// Отопитель - это конечный автомат
 struct Heater
 {
     enum HeaterRegime regime;
@@ -54,6 +61,7 @@ struct Heater
         transition_table[HEATER_N_REGIMES];
 };
 
+// Основная процедура переключения отопителя
 struct Heater * transitHeater( struct Heater * heater
                              , degrees_t dt           );
 

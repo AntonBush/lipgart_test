@@ -1,11 +1,14 @@
 #include "string_utility.h"
+// Загрузчик таблиц переходов климатической системы
 #include "load_climate_system_tt.h"
 
 #include <stdio.h>
 
+// Пути файлов для ввода-вывода
 #define INPUT_FILE "in.txt"
 #define OUTPUT_FILE "out.txt"
 
+// Сообщение для вывода результата итерации
 struct Message
 {
     int iteration_no;
@@ -17,6 +20,7 @@ struct Message
     int condenser;
 };
 
+// Установка начального состояния климатической системы
 static void initClimateSystemRegimes(struct ClimateSystem * system)
 {
     system->regime = Ventilation;
@@ -26,20 +30,25 @@ static void initClimateSystemRegimes(struct ClimateSystem * system)
     system->conditioner.compressor.regime = Compressor0;
 }
 
+// Структура для работы с вводом-выводом
 struct Io
 {
     FILE * in;
     FILE * out;
 };
 
+// Установка начального состояния структуры Io
 static void initIo(struct Io* io)
 {
     io->in  = NULL;
     io->out = NULL;
 }
 
+// Открытие файлов для ввода-вывода
 static int openIo(struct Io * io);
+// Закрытие файлов для ввода-вывода
 static void closeIo(struct Io * io);
+// Процедура эмуляции системы
 static void processInput(struct Io * io, struct ClimateSystem * system);
 
 int main(void)
@@ -49,6 +58,8 @@ int main(void)
     struct ClimateSystem system;
     initClimateSystemRegimes(&system);
 
+    // В климатическую систему загружаются таблицы
+    // переходов из текстовых файлов
     int error = loadClimateSystemTransitionTables(&system);
     if (error != 0)
     {
@@ -56,6 +67,7 @@ int main(void)
         return error;
     }
 
+    // Подготовка файлов ввода-вывода
     struct Io io;
     initIo(&io);
     error = openIo(&io);
@@ -86,6 +98,10 @@ int main(void)
 int openIo(struct Io * io)
 {
     int error = fopen_s(&(io->in), INPUT_FILE, "r");
+    // параметр css=UTF-8 необходим, потому что формат выходных
+    // данных содержит кириллицу.
+    // Так же необходимо добавлять флаг /utf-8 компилятору,
+    // чтобы он воспринимал исходный текст программы как UNICODE.
     error |= fopen_s(&(io->out), OUTPUT_FILE, "w, ccs=UTF-8");
 
     if (io->in == NULL || io->out == NULL)
@@ -110,18 +126,27 @@ void closeIo(struct Io * io)
     }
 }
 
+// Процедура заполнения сообщения на основе
+// информации о системе для дальнейшего вывода
 static void fillMessage(struct Message* message, struct ClimateSystem* system);
+// Процедура вывода сообщения
 static void printMessage(FILE* stream, struct Message message);
 
+// Основная процедура эмуляции системы
 void processInput(struct Io* io, struct ClimateSystem* system)
 {
     struct Message message;
+    // Сообщение также использует для хранения
+    // номера текущей итерации
     message.iteration_no = 0;
+    // Читаем из файла пока можем прочитать два
+    // целых числа
     while (fscanf_s(io->in
         , "%d %d"
         , &(message.target_t)
         , &(message.current_t)) == 2)
     {
+        // Процедура переключения автомата климатической системы
         transitClimateSystem(system
             , message.target_t - message.current_t);
 
@@ -134,6 +159,8 @@ void processInput(struct Io* io, struct ClimateSystem* system)
 
 void fillMessage(struct Message* message, struct ClimateSystem* system)
 {
+    // Используются функции преобразования режимов в
+    // целочисленный формат
     message->fan        = pwmToInt(system->convector.regime);
     message->heater     = heaterRegimeToInt(system->heater.regime);
     message->compressor = compressorRegimeToInt(system->conditioner.compressor.regime);

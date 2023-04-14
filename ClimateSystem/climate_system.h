@@ -5,14 +5,17 @@
 #include "heater.h"
 #include "conditioner.h"
 
+// Для обозначения режима работы используется перечисление
 enum ClimateSystemRegime
 {
       Ventilation = 0
     , Cooling
     , Heating
+    // Число режимов работы климатической системы
     , CLIMATE_SYSTEM_N_REGIMES
 };
 
+// Получение режима из символа
 inline enum ClimateSystemRegime climateSystemRegimeFromChar(char ch)
 {
     switch (ch)
@@ -24,6 +27,7 @@ inline enum ClimateSystemRegime climateSystemRegimeFromChar(char ch)
     }
 }
 
+// Преобразование режима в символ
 inline char climateSystemRegimeToChar(enum ClimateSystemRegime regime)
 {
     switch (regime)
@@ -32,10 +36,12 @@ inline char climateSystemRegimeToChar(enum ClimateSystemRegime regime)
     case Cooling     : return 'c';
     case Heating     : return 'h';
     case CLIMATE_SYSTEM_N_REGIMES:
-    default          : return -1;
+    default          : return '?';
     }
 }
 
+// dt = delta_temperature = target_t - current_t
+// dt - отклонение от уставки
 #define CLIMATE_SYSTEM_TRANSITION_TABLE_COLUMN_SIZE 5
 struct ClimateSystemTransitionTableColumn
 {
@@ -46,6 +52,11 @@ struct ClimateSystemTransitionTableColumn
     enum ClimateSystemRegime if_dt_greater_1degree;
 };
 
+// Климатическая система - это конечный автомат.
+// Климатическая система состоит из
+// * конвектора
+// * отопителя
+// * кондиционера
 struct ClimateSystem
 {
     enum ClimateSystemRegime regime;
@@ -57,6 +68,7 @@ struct ClimateSystem
     struct Conditioner conditioner;
 };
 
+// Основная процедура переключения климатической системы
 struct ClimateSystem * transitClimateSystem( struct ClimateSystem * system
                                            , degrees_t dt                  );
 

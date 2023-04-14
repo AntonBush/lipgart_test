@@ -2,13 +2,17 @@
 
 #include <stddef.h>
 
+// Псевдоним для типа столбца таблицы переходов
 typedef struct HeaterTransitionTableColumn column_t;
 
+// Функция получения столюца таблицы переходов,
+// соответствующего текущему режимы работы
 static column_t * nextStateColumn(struct Heater * heater)
 {
     return &(heater->transition_table[heater->regime]);
 }
 
+// Основная процедура переключения
 struct Heater * transitHeater( struct Heater * heater
                              , degrees_t dt           )
 {

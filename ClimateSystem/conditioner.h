@@ -3,6 +3,7 @@
 
 #include "degree_t.h"
 
+// Режим работы конденсора
 enum CondenserRegime
 {
       Condenser0
@@ -12,6 +13,7 @@ enum CondenserRegime
     , CONDENSER_N_REGIMES
 };
 
+// Получение режима из числа
 inline enum CondenserRegime condenserRegimeFromInt(int i)
 {
     switch (i)
@@ -24,6 +26,7 @@ inline enum CondenserRegime condenserRegimeFromInt(int i)
     }
 }
 
+// Преобразование режима в число
 inline int condenserRegimeToInt(enum CondenserRegime regime)
 {
     switch (regime)
@@ -37,6 +40,8 @@ inline int condenserRegimeToInt(enum CondenserRegime regime)
     }
 }
 
+// dt = delta_temperature = target_t - current_t
+// dt - отклонение от уставки
 #define CONDENSER_TRANSITION_TABLE_COLUMN_SIZE 5
 struct CondenserTransitionTableColumn
 {
@@ -47,6 +52,7 @@ struct CondenserTransitionTableColumn
     enum CondenserRegime if_dt_greater_minus_1degree;
 };
 
+// Конденсор - это конечный автомат
 struct Condenser
 {
     enum CondenserRegime regime;
@@ -55,6 +61,7 @@ struct Condenser
 };
 
 
+// Режим работы компрессора
 enum CompressorRegime
 {
       Compressor0
@@ -63,6 +70,7 @@ enum CompressorRegime
     , COMPRESSOR_N_REGIMES
 };
 
+// Получение режима из числа
 inline enum CompressorRegime compressorRegimeFromInt(int i)
 {
     switch (i)
@@ -74,6 +82,7 @@ inline enum CompressorRegime compressorRegimeFromInt(int i)
     }
 }
 
+// Преобразование режима в число
 inline int compressorRegimeToInt(enum CompressorRegime regime)
 {
     switch (regime)
@@ -86,6 +95,7 @@ inline int compressorRegimeToInt(enum CompressorRegime regime)
     }
 }
 
+// Компрессор - это конечный автомат
 struct Compressor
 {
     enum CompressorRegime regime;
@@ -94,12 +104,16 @@ struct Compressor
 };
 
 
+// Кондиционер состоит из
+// * конденсора
+// * компрессора
 struct Conditioner
 {
     struct Condenser condenser;
     struct Compressor compressor;
 };
 
+// Основная процедура переключения кондиционера
 struct Conditioner * transitConditioner( struct Conditioner * conditioner
                                        , degrees_t dt                     );
 

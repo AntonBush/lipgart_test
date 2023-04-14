@@ -2,13 +2,17 @@
 
 #include <stddef.h>
 
+// Псевдоним для типа столбца таблицы переходов
 typedef struct ConvectorTransitionTableColumn column_t;
 
+// Функция получения столюца таблицы переходов,
+// соответствующего текущему режимы работы
 static column_t * nextStateColumn(struct Convector * convector)
 {
     return &(convector->transition_table[convector->regime]);
 }
 
+// Основная процедура переключения
 struct Convector * transitConvector( struct Convector * convector
                                    , degrees_t dt                 )
 {
@@ -19,6 +23,7 @@ struct Convector * transitConvector( struct Convector * convector
 
     column_t * column = nextStateColumn(convector);
 
+    // Получение модуля отклонения от уставки
     degrees_t abs_dt = (dt < 0) ? -dt : dt;
 
     if (abs_dt == 0)

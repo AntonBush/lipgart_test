@@ -3,6 +3,7 @@
 
 #include "degree_t.h"
 
+// Режим работы Широтно-Импульсной Модуляции
 enum Pwm
 {
       Pwm0
@@ -12,6 +13,7 @@ enum Pwm
     , PWM_COUNT
 };
 
+// Получение режима из числа
 inline enum Pwm pwmFromInt(int i)
 {
     switch (i)
@@ -20,10 +22,12 @@ inline enum Pwm pwmFromInt(int i)
     case 33  : return Pwm33;
     case 66  : return Pwm66;
     case 100 : return Pwm100;
+    // Число режимов работы ШИМ
     default  : return PWM_COUNT;
     }
 }
 
+// Преобразование режима в число
 inline int pwmToInt(enum Pwm pwm)
 {
     switch (pwm)
@@ -37,6 +41,8 @@ inline int pwmToInt(enum Pwm pwm)
     }
 }
 
+// dt = delta_temperature = target_t - current_t
+// dt - отклонение от уставки
 #define CONVECTOR_TRANSITION_TABLE_COLUMN_SIZE 5
 struct ConvectorTransitionTableColumn
 {
@@ -47,6 +53,7 @@ struct ConvectorTransitionTableColumn
     enum Pwm if_abs_dt_greater_3degree;
 };
 
+// Конвектор - это конечный автомат.
 struct Convector
 {
     enum Pwm regime;
@@ -54,6 +61,7 @@ struct Convector
         transition_table[PWM_COUNT];
 };
 
+// Основная процедура переключения конвектора
 struct Convector * transitConvector( struct Convector * convector
                                    , degrees_t dt                 );
 
