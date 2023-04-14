@@ -37,6 +37,7 @@ inline int condenserRegimeToInt(enum CondenserRegime regime)
     }
 }
 
+#define CONDENSER_TRANSITION_TABLE_COLUMN_SIZE 5
 struct CondenserTransitionTableColumn
 {
     enum CondenserRegime if_dt_less_minus_3degree;

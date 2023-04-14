@@ -1,8 +1,5 @@
-// ClimateSystem.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
-
 #include "string_utility.h"
-#include "load_climate_system.h"
+#include "load_climate_system_tt.h"
 
 #include <stdio.h>
 
@@ -20,78 +17,127 @@ struct Message
     int condenser;
 };
 
-static void printMessage(FILE * stream, struct Message message);
+static void initClimateSystemRegimes(struct ClimateSystem * system)
+{
+    system->regime = Ventilation;
+    system->convector.regime = Pwm0;
+    system->heater.regime = Heater0;
+    system->conditioner.condenser.regime = Condenser0;
+    system->conditioner.compressor.regime = Compressor0;
+}
+
+struct Io
+{
+    FILE * in;
+    FILE * out;
+};
+
+static void initIo(struct Io* io)
+{
+    io->in  = NULL;
+    io->out = NULL;
+}
+
+static int openIo(struct Io * io);
+static void closeIo(struct Io * io);
+static void processInput(struct Io * io, struct ClimateSystem * system);
 
 int main(void)
 {
     puts("Test task \"Climate management\"");
 
     struct ClimateSystem system;
-    system.regime = Ventilation;
-    system.convector.regime = Pwm0;
-    system.heater.regime = Heater0;
-    system.conditioner.condenser.regime = Condenser0;
-    system.conditioner.compressor.regime = Compressor0;
+    initClimateSystemRegimes(&system);
 
-    int error = loadClimateSystem(&system);
+    int error = loadClimateSystemTransitionTables(&system);
     if (error != 0)
     {
         puterr("Error while loading climate system.");
         return error;
     }
 
-    FILE * in = NULL;
-    FILE * out = NULL;
-
-    error = fopen_s(&in, INPUT_FILE, "r");
-    error |= fopen_s(&out, OUTPUT_FILE, "w, ccs=UTF-8");
-
-    if (in == NULL || out == NULL)
+    struct Io io;
+    initIo(&io);
+    error = openIo(&io);
+    if (error != 0)
     {
-        if (in == NULL)
+        if (io.in == NULL)
         {
             puterr("Can not open input file ("INPUT_FILE").");
         }
-        else
-        {
-            fclose(in);
-        }
 
-        if (out == NULL)
+        if (io.out == NULL)
         {
             puterr("Can not open output file ("OUTPUT_FILE").");
         }
-        else
-        {
-            fclose(out);
-        }
 
+        closeIo(&io);
+
+        return error;
+    }
+
+    processInput(&io, &system);
+
+    closeIo(&io);
+
+    puts("Application was completed successfully.");
+}
+
+int openIo(struct Io * io)
+{
+    int error = fopen_s(&(io->in), INPUT_FILE, "r");
+    error |= fopen_s(&(io->out), OUTPUT_FILE, "w, ccs=UTF-8");
+
+    if (io->in == NULL || io->out == NULL)
+    {
+        puterr("Error while openning input-output files.");
         return -1;
     }
 
-    struct Message message;
-    message.iteration_no = 0;
-    while (fwscanf_s( in
-                    , L"%d %d"
-                    , &(message.target_t)
-                    , &(message.current_t)) == 2 )
-    {
-        transitClimateSystem( &system
-                            , message.target_t - message.current_t );
-        
-        message.iteration_no += 1;
-        message.fan        = pwmToInt(system.convector.regime);
-        message.heater     = heaterRegimeToInt(system.heater.regime);
-        message.compressor = compressorRegimeToInt(system.conditioner.compressor.regime);
-        message.condenser  = condenserRegimeToInt(system.conditioner.condenser.regime);
+    return 0;
+}
 
-        printMessage(out, message);
+void closeIo(struct Io * io)
+{
+    if (io->in != NULL)
+    {
+        fclose(io->in);
     }
 
-    fclose(in);
-    fclose(out);
+    if (io->out != NULL)
+    {
+        fclose(io->out);
+    }
+}
 
-    puts("Application was completed.");
+static void fillMessage(struct Message* message, struct ClimateSystem* system);
+static void printMessage(FILE* stream, struct Message message);
+
+void processInput(struct Io* io, struct ClimateSystem* system)
+{
+    struct Message message;
+    message.iteration_no = 0;
+    while (fscanf_s(io->in
+        , "%d %d"
+        , &(message.target_t)
+        , &(message.current_t)) == 2)
+    {
+        transitClimateSystem(system
+            , message.target_t - message.current_t);
+
+        message.iteration_no += 1;
+        fillMessage(&message, system);
+
+        printMessage(io->out, message);
+    }
+}
+
+void fillMessage(struct Message* message, struct ClimateSystem* system)
+{
+    message->fan        = pwmToInt(system->convector.regime);
+    message->heater     = heaterRegimeToInt(system->heater.regime);
+    message->compressor = compressorRegimeToInt(system->conditioner.compressor.regime);
+    message->condenser  = condenserRegimeToInt(system->conditioner.condenser.regime);
 }
 
 void printMessage(FILE * stream, struct Message message)
@@ -104,25 +150,3 @@ void printMessage(FILE * stream, struct Message message)
     fwprintf_s(stream, L"Компрессора = %d"ENDL,    message.compressor);
     fwprintf_s(stream, L"Конденсатор = %d"ENDL,    message.condenser);
 }
-
-
-/*
-=== Итерация N ===
-T уставки = value
-T салона = value
-Вентилятор = value
-Отопитель = value
-Компрессора = value
-Конденсор = value
-*/
-
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
-
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.

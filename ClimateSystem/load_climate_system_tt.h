@@ -3,6 +3,6 @@
 
 #include "climate_system.h"
 
-int loadClimateSystem(struct ClimateSystem * system);
+int loadClimateSystemTransitionTables(struct ClimateSystem * system);
 
 #endif // LOAD_CLIMATE_SYSTEM

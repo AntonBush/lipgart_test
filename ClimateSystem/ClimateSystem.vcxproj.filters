@@ -30,10 +30,10 @@
     <ClCompile Include="conditioner.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="load_climate_system.c">
+    <ClCompile Include="string_utility.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="string_utility.c">
+    <ClCompile Include="load_climate_system_tt.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,7 +56,7 @@
     <ClInclude Include="degree_t.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="load_climate_system.h">
+    <ClInclude Include="load_climate_system_tt.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

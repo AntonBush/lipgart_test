@@ -136,7 +136,7 @@
     <ClCompile Include="conditioner.c" />
     <ClCompile Include="convector.c" />
     <ClCompile Include="heater.c" />
-    <ClCompile Include="load_climate_system.c" />
+    <ClCompile Include="load_climate_system_tt.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="string_utility.c" />
   </ItemGroup>
@@ -146,7 +146,7 @@
     <ClInclude Include="convector.h" />
     <ClInclude Include="degree_t.h" />
     <ClInclude Include="heater.h" />
-    <ClInclude Include="load_climate_system.h" />
+    <ClInclude Include="load_climate_system_tt.h" />
     <ClInclude Include="string_utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

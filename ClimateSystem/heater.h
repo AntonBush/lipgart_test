@@ -37,6 +37,7 @@ inline int heaterRegimeToInt(enum HeaterRegime regime)
     }
 }
 
+#define HEATER_TRANSITION_TABLE_COLUMN_SIZE 5
 struct HeaterTransitionTableColumn
 {
     enum CondenserRegime if_dt_less_1degree;

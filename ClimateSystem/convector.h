@@ -66,6 +66,7 @@ inline int pwmToInt(enum Pwm pwm)
     }
 }
 
+#define CONVECTOR_TRANSITION_TABLE_COLUMN_SIZE 5
 struct ConvectorTransitionTableColumn
 {
     enum Pwm if_abs_dt_equal_0degree;

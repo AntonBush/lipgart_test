@@ -36,6 +36,7 @@ inline char climateSystemRegimeToChar(enum ClimateSystemRegime regime)
     }
 }
 
+#define CLIMATE_SYSTEM_TRANSITION_TABLE_COLUMN_SIZE 5
 struct ClimateSystemTransitionTableColumn
 {
     enum ClimateSystemRegime if_dt_less_minus_1degree;
