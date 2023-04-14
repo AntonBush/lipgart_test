@@ -149,9 +149,6 @@
     <ClInclude Include="load_climate_system_tt.h" />
     <ClInclude Include="string_utility.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="README.MD" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

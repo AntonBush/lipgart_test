@@ -60,7 +60,4 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="README.MD" />
-  </ItemGroup>
 </Project>
